@@ -10,7 +10,7 @@ unzip /tmp/user.zip
 cd /app
 npm install
 yum install mongodb-org-shell -y
-mongo --host MONGODB-SERVER-IPADDRESS </app/schema/user.js
+mongo --host mongodb.pradevops.online </app/schema/user.js
 systemctl daemon-reload
 systemctl enable user
 systemctl restart user
