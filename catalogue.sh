@@ -1,28 +1,28 @@
-echo ">>>>>>>>>> copying service file <<<<<<<<<<<<<<<<<<<"
+echo -e "\e[36m>>>>>>>>>> copying service file <<<<<<<<<<<<<<<<<<\e[0m"
 cp catalogue.service /etc/systemd/system/catalogue.service
-echo ">>>>>>>>>> copying repo file <<<<<<<<<<<<<<<<<<<"
+echo -e "\e[36m>>>>>>>>>> copying repo file <<<<<<<<<<<<<<<<<<\e[0m"
 cp mongo.repo /etc/yum.repos.d/mongo.repo
-echo ">>>>>>>>>> Install nodejs repo <<<<<<<<<<<<<<<<<<<"
+echo -e "\e[36m>>>>>>>>>> Install nodejs repo <<<<<<<<<<<<<<<<<<\e[0m"
 curl -sL https://rpm.nodesource.com/setup_lts.x | bash
-echo ">>>>>>>>>> install nodejs <<<<<<<<<<<<<<<<<<<"
+echo -e "\e[36m>>>>>>>>>> install nodejs <<<<<<<<<<<<<<<<<<\e[0m"
 yum install nodejs -y
-echo ">>>>>>>>>> creating application user <<<<<<<<<<<<<<<<<<<"
+echo -e "\e[36m>>>>>>>>>> creating application user <<<<<<<<<<<<<<<<<<\e[0m"
 useradd roboshop
- echo ">>>>>>>>>> create application dir <<<<<<<<<<<<<<<<<<<"
+ echo -e "\e[36m>>>>>>>>>> create application dir <<<<<<<<<<<<<<<<<<\e[0m"
 mkdir /app
-echo ">>>>>>>>>> download application code <<<<<<<<<<<<<<<<<<<"
+echo -e "\e[36m>>>>>>>>>> download application code <<<<<<<<<<<<<<<<<<\e[0m"
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue.zip
-echo ">>>>>>>>>> extract application code <<<<<<<<<<<<<<<<<<<"
+echo -e "\e[36m>>>>>>>>>> extract application code <<<<<<<<<<<<<<<<<<\e[0m"
 cd /app
 unzip /tmp/catalogue.zip
 cd /app
- echo ">>>>>>>>>> install nodejs dependencies <<<<<<<<<<<<<<<<<<<"
+ echo -e "\e[36m>>>>>>>>>> install nodejs dependencies <<<<<<<<<<<<<<<<<<\e[0m"
 npm install
- echo ">>>>>>>>>> install mongodb client <<<<<<<<<<<<<<<<<<<"
+ echo -e "\e[36m>>>>>>>>>> install mongodb client <<<<<<<<<<<<<<<<<<\e[0m"
 yum install mongodb-org-shell -y
- echo ">>>>>>>>>> Load catalogue schema <<<<<<<<<<<<<<<<<<<"
+ echo -e "\e[36m>>>>>>>>>> Load catalogue schema <<<<<<<<<<<<<<<<<<\e[0m"
 mongo --host mongodb.pradevops.online </app/schema/catalogue.js
- echo ">>>>>>>>>> start catalogue service <<<<<<<<<<<<<<<<<<<"
+ echo -e "\e[36m>>>>>>>>>> start catalogue service <<<<<<<<<<<<<<<<<<\e[0m"
 systemctl daemon-reload
 systemctl enable catalogue
 systemctl restart catalogue
