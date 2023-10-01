@@ -40,16 +40,16 @@ func_systemd
 }
 func_java() {
 echo -e "\e[36m>>>>>>>>>> copying ${component} service file <<<<<<<<<<<<<<<<<<\e[0m"
-cp ${component}.service /etc/systemd/system/${component}.service
+cp ${component}.service /etc/systemd/system/${component}.service &>>${log}
 echo -e "\e[36m>>>>>>>>>> Install Maven <<<<<<<<<<<<<<<<<<\e[0m"
-yum install maven -y
+yum install maven -y &>>${log}
 func_apppreq
   echo -e "\e[36m>>>>>>>>>> build ${component} service <<<<<<<<<<<<<<<<<<\e[0m"
-  mvn clean package
-  mv target/${component}-1.0.jar ${component}.jar
+  mvn clean package &>>${log}
+  mv target/${component}-1.0.jar ${component}.jar &>>${log}
   echo -e "\e[36m>>>>>>>>>> install mysql client <<<<<<<<<<<<<<<<<<\e[0m"
-  yum install mysql -y
+  yum install mysql -y &>>${log}
   echo -e "\e[36m>>>>>>>>>> Load ${component} schema <<<<<<<<<<<<<<<<<<\e[0m"
-  mysql -h mysql.pradevops.online -uroot -pRoboShop@1 < /app/schema/${component}.sql
+  mysql -h mysql.pradevops.online -uroot -pRoboShop@1 < /app/schema/${component}.sql &>>${log}
  func_systemd
 }
