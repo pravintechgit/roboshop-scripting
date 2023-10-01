@@ -1,5 +1,7 @@
 log=/tmp/roboshop.log
 func_apppreq() {
+   echo -e "\e[36m>>>>>>>>>> copying ${component} service file <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
+   cp ${component}.service /etc/systemd/system/${component}.service &>>${log}
     echo -e "\e[36m>>>>>>>>>> creating application user <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
     useradd roboshop &>>${log}
     echo -e "\e[36m>>>>>>>>>> remove application dir <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
@@ -22,8 +24,6 @@ func_systemd() {
 }
 nodejs() {
   log=/tmp/roboshop.log
-  echo -e "\e[36m>>>>>>>>>> copying ${component} service file <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
-  cp ${component}.service /etc/systemd/system/${component}.service &>>${log}
   echo -e "\e[36m>>>>>>>>>> copying mongodb repo file <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
   cp mongo.repo /etc/yum.repos.d/mongo.repo &>>${log}
   echo -e "\e[36m>>>>>>>>>> Install nodejs repo <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
@@ -40,8 +40,6 @@ func_apppreq
 func_systemd
 }
 func_java() {
-echo -e "\e[36m>>>>>>>>>> copying ${component} service file <<<<<<<<<<<<<<<<<<\e[0m"
-cp ${component}.service /etc/systemd/system/${component}.service &>>${log}
 echo -e "\e[36m>>>>>>>>>> Install Maven <<<<<<<<<<<<<<<<<<\e[0m"
 yum install maven -y &>>${log}
 func_apppreq
@@ -52,5 +50,14 @@ func_apppreq
   yum install mysql -y &>>${log}
   echo -e "\e[36m>>>>>>>>>> Load ${component} schema <<<<<<<<<<<<<<<<<<\e[0m"
   mysql -h mysql.pradevops.online -uroot -pRoboShop@1 < /app/schema/${component}.sql &>>${log}
+ func_systemd
+}
+
+func_python() {
+  echo -e "\e[36m>>>>>>>>>> Install python 3 <<<<<<<<<<<<<<<<<<\e[0m"
+  yum install python36 gcc python3-devel -y &>>${log}
+  func_apppreq
+  echo -e "\e[36m>>>>>>>>>> build ${component} service <<<<<<<<<<<<<<<<<<\e[0m"
+  pip3.6 install -r requirements.txt &>>${log}
  func_systemd
 }
