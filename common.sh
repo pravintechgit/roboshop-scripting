@@ -22,6 +22,23 @@ func_systemd() {
     systemctl enable ${component} &>>${log}
     systemctl restart ${component} &>>${log}
 }
+
+func_schema_setup() {
+  if [ "${schema_type}" == "mongodb" ]; then
+     echo -e "\e[36m>>>>>>>>>> install mongodb client <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
+    yum install mongodb-org-shell -y &>>${log}
+     echo -e "\e[36m>>>>>>>>>> Load ${component} schema <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
+    mongo --host mongodb.pradevops.online </app/schema/${component}.js &>>${log}
+  fi
+
+  if [ "${schema_type}" == "mysql" ]; then
+      echo -e "\e[36m>>>>>>>>>> install mysql client <<<<<<<<<<<<<<<<<<\e[0m"
+      yum install mysql -y &>>${log}
+      echo -e "\e[36m>>>>>>>>>> Load ${component} schema <<<<<<<<<<<<<<<<<<\e[0m"
+      mysql -h mysql.pradevops.online -uroot -pRoboShop@1 < /app/schema/${component}.sql &>>${log}
+  fi
+}
+
 nodejs() {
   log=/tmp/roboshop.log
   echo -e "\e[36m>>>>>>>>>> copying mongodb repo file <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
@@ -33,10 +50,7 @@ nodejs() {
 func_apppreq
    echo -e "\e[36m>>>>>>>>>> install nodejs dependencies <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
   npm install &>>${log}
-   echo -e "\e[36m>>>>>>>>>> install mongodb client <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
-  yum install mongodb-org-shell -y &>>${log}
-   echo -e "\e[36m>>>>>>>>>> Load ${component} schema <<<<<<<<<<<<<<<<<<\e[0m" | tee -a /tmp/roboshop.log
-  mongo --host mongodb.pradevops.online </app/schema/${component}.js &>>${log}
+func_schema_setup
 func_systemd
 }
 func_java() {
@@ -46,10 +60,7 @@ func_apppreq
   echo -e "\e[36m>>>>>>>>>> build ${component} service <<<<<<<<<<<<<<<<<<\e[0m"
   mvn clean package &>>${log}
   mv target/${component}-1.0.jar ${component}.jar &>>${log}
-  echo -e "\e[36m>>>>>>>>>> install mysql client <<<<<<<<<<<<<<<<<<\e[0m"
-  yum install mysql -y &>>${log}
-  echo -e "\e[36m>>>>>>>>>> Load ${component} schema <<<<<<<<<<<<<<<<<<\e[0m"
-  mysql -h mysql.pradevops.online -uroot -pRoboShop@1 < /app/schema/${component}.sql &>>${log}
+func_schema_setup
  func_systemd
 }
 
